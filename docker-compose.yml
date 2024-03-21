@@ -1,0 +1,108 @@
+version: 3.7"
+
+services:
+  lcnc_db:
+    container_name: lcnc_db
+    image: postgres:13
+    platform: linux/x86_64 #For M1 Chip
+    restart: unless-stopped
+    environment:  
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS   
+      POSTGRES_DB: $DB_NAME
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - lcnc_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d lcnc_db -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  lcnc_client:
+    build:
+      context: ./lcnc_client
+      dockerfile: Dockerfile
+    container_name: lcnc_client
+    image: lcnc_client
+    restart: unless-stopped
+    environment:
+      - HOST=0.0.0.0
+    volumes:
+      - ./lcnc_client:/lcnc_client/app
+      - client_nm:/lcnc_client/app/node_modules
+    ports:
+      - 3002:3002
+    networks:
+      - lcnc_network
+    depends_on:
+      - lcnc_api
+    command: yarn dev
+    stdin_open: true
+    tty: true
+
+  lcnc_api:
+    build:
+      context: ./lcnc_api
+      dockerfile: Dockerfile
+    container_name: lcnc_api
+    image: lcnc_api
+    restart: unless-stopped
+    volumes:
+      - ./lcnc_api:/lcnc_api/
+      - ./lcnc_api/package.json:/lcnc_api/package.json
+      - ./lcnc_api/package-lock.json:/lcnc_api/package-lock.json
+      - api_nm:/lcnc_api/node_modules
+    ports:
+      - 40024:40024
+      - 9229:9229
+    networks:
+      - lcnc_network
+    depends_on:
+      - lcnc_db
+    stdin_open: true
+    tty: true
+
+  pgadmin:
+    container_name: lcnc_pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@cody.inc'
+      PGADMIN_DEFAULT_PASSWORD: 'password'
+      PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT: 'False'
+      PGADMIN_CONFIG_WTF_CSRF_ENABLED: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - lcnc_db
+    links:
+      - lcnc_db
+
+  mailhog:
+    container_name: lcnc_mailhog
+    image: mailhog/mailhog:latest
+    logging:
+      driver: none
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres:
+    driver: local
+  pgadmin:
+    driver: local
+  api_nm:
+    driver: local
+  client_nm:
+    driver: local
+
+networks:
+  lcnc_network:
+    driver: bridge
