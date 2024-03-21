@@ -5,10 +5,10 @@ This APP aims to create an application with common functionalities for starter t
 ## Setup
 - Clone the main app
 ```bash
-  git clone --recurse-submodules git@gitlab.com:ligph.com/base/lcnc_app.git
+  git clone --recurse-submodules git@github.com:michaellarrubis/lcnc_app.git
 ```
 - Switch the branches for both API & CLIENT to `main` or to `other branch`.
-- Rename the app with your desired app_name, `lcnc, Cody Plate` to `[app_name, App Name]`: (Preferrably with VSCode).
+- Rename the app with your desired app_name, `lcnc, LCNC Plate` to `[app_name, App Name]`: (Preferrably with VSCode).
   - Open the app in VSCode.
   - press `cmd + shift + h` to find and replace
 - lcnc_api, lcnc_client
@@ -78,13 +78,13 @@ This APP aims to create an application with common functionalities for starter t
 ## DB ADMIN
 - Go to [http://localhost:5050](http://localhost:5050)
 ```bash
-  email: admin@cody.inc
+  email: admin@***.inc
   password: password
 ```
 - Click New Server and put this details
 ```bash
   General
-    - Name: CodyPlate Server
+    - Name: LcncPlate Server
   Connection
     - Host name/address: host.docker.internal
     - Port: 5432
