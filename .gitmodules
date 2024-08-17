@@ -1,6 +1,6 @@
 [submodule "lcnc_api"]
 	path = lcnc_api
-	url = https://github.com/michaellarrubis/lcnc_api.git
+	url = git@github.com:michaellarrubis/lcnc_app.git
 [submodule "lcnc_client"]
 	path = lcnc_client
-	url = https://github.com/michaellarrubis/lcnc_client.git
+	url = git@github.com:michaellarrubis/lcnc_client.git
